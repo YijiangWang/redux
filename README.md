@@ -1,0 +1,128 @@
+### 手写 redux 源码，并且实现了常用中间件：redux-thunk、redux-logger、redux-promise
+- 手写 redux 中，基本实现了 redux 的所有常用功能，且全程无第三方框架，实现了纯手写所有代码。
+
+### redux
+- React 应用最广的状态管理库：redux；其它的还有 mobx，市场较少。
+
+- redux 只是一个纯粹的状态管理库，默认只支持同步，实现异步任务（比如延迟、网络请求），需要中间件的支持，如常用的 redux-thunk、redux-logger。
+
+### 项目结构
+```
+|-- public：资源文件
+    |-- index.html
+|-- src
+    |-- index.js：入口文件
+    |-- pages
+        |-- ReduxPage：使用 redux 框架的组件
+        |-- YJReduxPage：使用自定义 yj-redux 框架的组件（可以和 ReduxPage 比较，可以发现用法完全一致）
+    |-- store
+        |-- store：使用 redux 创建 store，并且引入三个中间件
+        |-- yj-store：使用 yj-redux 创建 store（可以和 store 中的内容比较，用法完全一致）
+    |-- yj-redux：手写实现 redux 功能，包含了 createStore、combineReducers、applyMiddleware
+        |-- createStore：包含了 getState、dispatch、subscribe 功能
+        |-- combineReducers
+        |-- applyMiddleware
+    |-- middlewares：手写用到的中间件
+        |-- redux-thunk
+        |-- redux-logger
+        |-- redux-promise
+    |-- utils：手写中间件时发现用到了第三方库，这里手写一下中间件中用到的第三方库
+        |-- is-promise：判断是否是 promise
+```
+
+### 函数式编程
+- 函数式编程有两个最基本的运算：合成(compose)与柯里化(currying)；
+
+##### 函数的合成
+- 如果一个值要经过多个函数，才能变成另外一个值，就可以把所有中间步骤合并成一个函数，这就叫做“函数的合成”；
+- 可以进行合成的函数必须要是一个“纯函数”，满足结合律：`compose(f, compose(g, h))` 等同于 `compose(compose(f, g), h)`;
+- 代码示例：
+  ```js
+    // 合成之前： a -> c
+    let b = fun1(a);
+    let c = fun2(b);
+
+    // 函数合成
+    let compose = function(fun1, fun2) {
+      return function(a) {
+        return fun1(fun2(x));
+      }
+    }
+  ```
+- 上代码：
+  ```js
+    let f1 = (arg) => {
+      console.log('f1', arg)
+      return arg;
+    }
+    let f2 = (arg) => {
+      console.log('f2', arg)
+      return arg;
+    }
+    let f3 = (arg) => {
+      console.log('f3', arg)
+      return arg;
+    }
+    let f4 = (arg) => {
+      console.log('f4', arg)
+      return arg;
+    }
+    // 方法一：
+    f1('perfect');
+    f2('perfect');
+    f3('perfect');
+    f4('perfect');
+    
+    // 方法二：
+    f4(f3(f2(f1('perfect'))));
+    
+    // 方法三：
+    let res = compose(f1, f2, f3, f4)('perfect');
+    console.log(res)
+
+    function compose(...funcs) {
+      if(funcs.length === 0) {
+        return arg => arg;
+      } else if(funcs.length === 1) {
+        return funcs[0]
+      } else {
+        return funcs.reduce((a, b) => {
+          return (arg) => b(a(arg));
+        });
+      }
+    }
+  ```
+
+  ```js
+    // redux 中源码
+    function compose(...funcs) {
+      if (funcs.length === 0) {
+        return (arg) => arg
+      }
+
+      if (funcs.length === 1) {
+        return funcs[0]
+      }
+
+      return funcs.reduce((a, b) => (...args) => a(b(...args)))
+    }
+  ```
+
+##### 函数柯里化
+- 概念：把一个多参数的函数，转化为单参数函数；
+- 上代码
+  ```js
+  // 柯里化之前
+  function add(x, y) {
+    return x + y;
+  }
+  add(1, 2) // 3
+
+  // 柯里化之后
+  function addX(y) {
+    return function (x) {
+      return x + y;
+    };
+  }
+  addX(2)(1) // 3
+  ```
