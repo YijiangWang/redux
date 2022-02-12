@@ -1,5 +1,5 @@
 export default function combineReducers(reducers) {
-  return function combination(state={}, action) {
+  return function(state={}, action) {
     let hasChanged = false;
     let nextState = {};
     for(let key in reducers) {

@@ -1,10 +1,12 @@
-### 手写 redux 源码，并且实现了常用中间件：redux-thunk、redux-logger、redux-promise
-- 手写 redux 中，基本实现了 redux 的所有常用功能，且全程无第三方框架，实现了纯手写所有代码。
-
 ### redux
 - React 应用最广的状态管理库：redux；其它的还有 mobx，市场较少。
 
 - redux 只是一个纯粹的状态管理库，默认只支持同步，实现异步任务（比如延迟、网络请求），需要中间件的支持，如常用的 redux-thunk、redux-logger。
+
+### redux 库的使用，手写 redux 源码，实现中间件
+- 这里可以学习到 redux 库的基本使用；
+- 手写实现 redux 中，基本实现了 redux 的所有常用功能，且全程无第三方框架，实现了纯手写所有代码；
+- 并且实现了常用中间件：redux-thunk、redux-logger、redux-promise。
 
 ### 项目结构
 ```
@@ -29,6 +31,11 @@
     |-- utils：手写中间件时发现用到了第三方库，这里手写一下中间件中用到的第三方库
         |-- is-promise：判断是否是 promise
 ```
+
+### 使用
+- 安装依赖：`npm install`;
+- 运行项目：`yarn start`；
+- 底下就可以看到效果，可以进行学习、调试。
 
 ### 函数式编程
 - 函数式编程有两个最基本的运算：合成(compose)与柯里化(currying)；
