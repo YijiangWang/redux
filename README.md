@@ -1,10 +1,36 @@
 ### redux
-- React 应用最广的状态管理库：redux；其它的还有 mobx，市场较少。
+- React 应用最广的状态管理库：redux；其它的还有 mobx，市场相对 redux 较少一些。
 
 - redux 只是一个纯粹的状态管理库，默认只支持同步，实现异步任务（比如延迟、网络请求），需要中间件的支持，如常用的 redux-thunk、redux-logger。
 
-### redux 库的使用，手写 redux 源码，实现中间件
-- 这里可以学习到 redux 库的基本使用；
+- redux 数据流向图
+![redux 数据流向图](./public/redux-dataflow.jpg)
+
+### redux 库的使用
+- 提供了三个重要 API：createStore、applyMiddleware 和 combineReducers；
+##### createStore
+- `const store = createStore(reducer)；`
+- 其中 reducer 只能是纯函数；
+- store 中，有几个主要的 API：dispatch、getState、subscribe；
+###### dispatch
+- `dispatch({type: 'ADD'});`
+- 默认情况下，dispatch 只能接受一个 plain object；当传入 function 或者 promise 时，需要使用中间件，如何使用？在 applyMiddleware 中展示；
+###### getState
+- `store.getState()`；
+- 获取 store 中的所有状态信息；
+###### subscribe
+- `store.subscribe(()=> {this.forceUpdate()});`
+- 订阅：当 store 中 state 发生变化时，需要告知组件进行更新；
+- 通常情况下，订阅和取消订阅都是成对出现的；
+
+##### combineReducers
+- 当有多个 reducer 时，将其进行合并，然后传递给 createStore；
+- `const store = createStore(combineReducers({count: counterReducer, num: numReducer}));`
+##### applyMiddleware
+- `const store = createStore(combineReducers({count: counterReducer}), applyMiddle('thunk', 'promise', 'logger'));`
+- 当 store.dispatch 接受的不是一个 action 时，就需要使用中间件进行协助处理；
+
+### 手写 redux 源码，顺道实现了三个常用中间件
 - 手写实现 redux 中，基本实现了 redux 的所有常用功能，且全程无第三方框架，实现了纯手写所有代码；
 - 并且实现了常用中间件：redux-thunk、redux-logger、redux-promise。
 
@@ -32,7 +58,7 @@
         |-- is-promise：判断是否是 promise
 ```
 
-### 使用
+### 学习
 - 安装依赖：`npm install`;
 - 运行项目：`yarn start`；
 - 底下就可以看到效果，可以进行学习、调试。
