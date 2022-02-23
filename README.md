@@ -77,7 +77,7 @@
 
     // 函数合成
     let compose = function(fun1, fun2) {
-      return function(a) {
+      return function(x) {
         return fun1(fun2(x));
       }
     }
